@@ -66,4 +66,25 @@ using Test
         @test isapprox(x_final, expected_x, atol=1e-2)
         @test isapprox(a_final, expected_a, atol=1e-2)
     end
+
+    # 時間に比例する力のテスト
+    @testset "Time-dependent force" begin
+        # 時間に比例する力: F = t
+        F(x, t) = t
+        
+        tmax = 1.0
+        x0 = 0.0
+        a0 = 0.0  # 初期速度
+        h = 1e-4   # 時間ステップ
+
+        x_final, a_final = perform_timeprop(F, tmax, x0, a0, h)
+        
+        # 理論値: x = (1/6)*t^3 (3回積分)
+        # 理論値: v = (1/2)*t^2 (2回積分)
+        expected_x = (1/6) * tmax^3
+        expected_a = (1/2) * tmax^2
+
+        @test isapprox(x_final, expected_x, rtol=1e-3)
+        @test isapprox(a_final, expected_a, rtol=1e-3)
+    end
 end
